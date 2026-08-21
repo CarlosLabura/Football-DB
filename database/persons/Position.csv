@@ -1,0 +1,13 @@
+id,name,abbreviation,leftfootX,rightfootX,paceX,shootingX,passingX,dribblingX,defendingX,physicalX,goalkeepingX
+1,Goalkeeper,GK,0,0,0,0,0.025,0,0.01,0,1
+2,Centre-Back,CB,0,0,0,0,0.1,0,1,0.5,0
+3,Left-Back,LB,0.5,0,0.25,0,0.15,0,1,0.25,0
+4,Right-Back,RB,0,0.5,0.25,0,0.15,0,1,0.25,0
+5,Central-Midfielder,CM,0,0,0,0.05,1,0,0.025,0,0
+6,Defensive-Midfielder,DM,0,0,0,0,1,0,0.75,0.2,0
+7,Attacking-Midfielder,AM,0,0,0.1,0.3,1,0.5,0,0,0
+8,Left-Midfielder,LM,0.5,0,0.5,0,1,0.25,0,0,0
+9,Right-Midfielder,RM,0,0.5,0.5,0,1,0.25,0,0,0
+10,Striker,ST,0,0,0.05,1,0.025,0.025,0,0.2,0
+11,Left-Wing,LW,0,0.5,0.75,0.3,0.5,1,0,0,0
+12,Right-Wing,RW,0.5,0,0.75,0.3,0.5,1,0,0,0
