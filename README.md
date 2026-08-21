@@ -1,21 +1,17 @@
-## Unnamed Football Database
+# Unnamed Football Database
 This is a personal project made for fun, inspired in other videogame methods like EA FC saga or eFootball rating methods to clasify players. also adding other systems from the football world. there are really few teams currently (Real Madrid CF) and (FC Barcelona), but im planning to add more when I have a stronger base
 
 ## Features
-* Players
-* Managers (Not added yet)
-* Teams
-* Contracts
-* Formations (Not added yet)
-* Match simulation (Not added yet)
+* Players (Ratings, Potential, Contracts, Positions)
+* Managers (Ratings, Playstyle, Formations) [Not added yet]
+* Teams (Budget, Contracts)
+* Formations [Not added yet]
+* Match simulation [Not added yet]
 * Competitions 
-* Prolly more at some point
-
-## Players
-wip
+* More soon
 
 ## Ratings
-Ratings are simplier, so players might not be perfectly matched with their actual performance, they are also took from last season statistics from EA FC 26 so they might be outdated, at some point I plan to rework them
+Ratings are simplier, so players might not be perfectly matched with their actual performance, they are also took from last season statistics from EA FC 26 so they might be outdated and will be reworked soon
 The attributes are:
 * Feet
   * Left foot
@@ -52,6 +48,3 @@ The attributes are:
   * Leadership
   * Sharpness
   * Reputation
-
-## Contracts
-wip
