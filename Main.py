@@ -63,7 +63,6 @@ def loadContracts(path:str):
 # formations
 # managers, id, playstyle
 # statistics
-# transfers
 
 # LOAD ORDER
 # comps

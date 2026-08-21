@@ -32,9 +32,13 @@ class Contract:
     def __str__(self):
         return f"{self.player.getName()} ({self.team.name}) | Start: {self.start} | End: {self.end}"
 
-    def newContract(self, team:int, end:str, wage:int = 0, number:int = 0, jersey:str = ""):
+    def transfer(self, team:int, end:str, wage:int = 0, number:int = 0, jersey:str = "", fee:int = 0):
         if self.team.id == int(team):
-            print(f"Contract.newContract({self.player.getName()} [{self.id}]): Cannot do a new contract for the same team")
+            print(f"Contract.transfer({self.player.getName()} [{self.id}]): Cannot transfer to the same team")
+            return
+
+        if Team.get(int(team)).budget < int(fee):
+            print(f"Contract.transfer({self.player.getName()} [{self.id}]): Team has not enough budget")
             return
 
         self.end = Date.parse(str(end))
@@ -42,22 +46,24 @@ class Contract:
         self.wage = int(wage)
         self.number = int(number)
         self.setJersey(str(jersey))
-        self.changeTeam(int(team))
+        self.changeTeam(int(team), int(fee))
 
-    def changeTeam(self, team:int):
+    def changeTeam(self, team:int, fee:int = 0):
+        self.team.wage += int(fee)
         self.team.contracts[self.player.id] = None
         self.player.contracts[self.team.id] = None
 
         self.team = Team.get(int(team))
         self.player.contracts[self.team.id] = self
         self.team.contracts[self.player.id] = self
+        self.team.wage -= int(fee)
 
     def expandContract(self, date:str):
         self.end = Date.parse(str(date))
 
     def setJersey(self, custom:str = ""):
-        if custom != "":
-            self.name = custom
+        if str(custom) != "":
+            self.name = str(custom)
         elif self.player.commonName != "":
             self.name = self.player.commonName
         else:
