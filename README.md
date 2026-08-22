@@ -5,7 +5,7 @@ This is a personal project made for fun, inspired in other videogame methods lik
 * Players (Ratings, Potential, Contracts, Positions)
 * Managers (Ratings, Playstyle, Formations) [Not added yet]
 * Teams (Budget, Contracts)
-* Formations [Not added yet]
+* Formations (Styles)
 * Match simulation [Not added yet]
 * Competitions 
 * More soon
