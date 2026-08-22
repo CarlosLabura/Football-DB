@@ -5,58 +5,71 @@ from source.persons.Contract import Contract
 
 import csv
 # in databases in case of repearing the ids the last database loaded will take the place
-# LoadTeams(path) Loads the Teams database from the path selected
-def loadTeams(path:str):
+def loadTeams(path:str) -> csv.DictReader:
+    """
+    Loads the Teams database from the path selected
+    | Returns: Database content
+    """
     with open(path, mode="r", encoding="utf-8") as archivo:
-        lector_csv = csv.DictReader(archivo)
+        file = csv.DictReader(archivo)
 
-        for fila in lector_csv:
-            tm = Team(fila["id"], fila["name"], int(fila["nation"]))
-            tm.abbreviation = fila["abbreviation"]
-            tm.state = fila["state"]
-            tm.setFundation(fila["fundation"])
-            tm.budget = int(fila["budget"])
-# loadPlayers(path) Loads the Player database from the path selected
-def loadPlayers(path:str):
+        for row in file:
+            tm = Team(row["id"], row["name"], int(row["nation"]))
+            tm.abbreviation = row["abbreviation"]
+            tm.state = row["state"]
+            tm.setFundation(row["fundation"])
+            tm.budget = int(row["budget"])
+        return file
+def loadPlayers(path:str) -> csv.DictReader:
+    """
+    Loads the Players database from the path selected
+    | Returns: Database content
+    """
     with open(path, mode="r", encoding="utf-8") as archivo:
-        lector_csv = csv.DictReader(archivo)
+        file = csv.DictReader(archivo)
 
-        for fila in lector_csv:
-            plr = Player(fila["id"], fila["name"], fila["surname"], fila["birth"])
-            plr.commonName = fila["commonName"]
+        for row in file:
+            plr = Player(row["id"], row["name"], row["surname"], row["birth"])
+            plr.commonName = row["commonName"]
 
-            nations = fila["nations"].replace(" ", "").split(",")
+            nations = row["nations"].replace(" ", "").split(",")
             for nation in nations:
                 plr.addNation(nation)
 
-            plr.setBody(fila["height"], fila["weight"])
-            plr.setStatsFoot(fila["left"], fila["right"])
+            plr.setBody(row["height"], row["weight"])
+            plr.setStatsFoot(row["left"], row["right"])
 
-            plr.potential = int(fila["potential"])
+            plr.potential = int(row["potential"])
 
-            plr.setStatsPace(fila["acceleration"], fila["speed"], fila["resistance"])
-            plr.setStatsShooting(fila["finishing"], fila["curve"], fila["power"])
-            plr.setStatsPassing(fila["accuracy"], fila["cross"], fila["vision"])
-            plr.setStatsDribbling(fila["dribble"], fila["skill"], fila["control"])
-            plr.setStatsDefending(fila["tackle"], fila["slide"], fila["header"])
-            plr.setStatsPhysical(fila["jump"], fila["strength"], fila["resistance"])
-            plr.setStatsGoalkeeping(fila["dive"], fila["catch"], fila["reflexes"])
+            plr.setStatsPace(row["acceleration"], row["speed"], row["resistance"])
+            plr.setStatsShooting(row["finishing"], row["curve"], row["power"])
+            plr.setStatsPassing(row["accuracy"], row["cross"], row["vision"])
+            plr.setStatsDribbling(row["dribble"], row["skill"], row["control"])
+            plr.setStatsDefending(row["tackle"], row["slide"], row["header"])
+            plr.setStatsPhysical(row["jump"], row["strength"], row["resistance"])
+            plr.setStatsGoalkeeping(row["dive"], row["catch"], row["reflexes"])
 
-            plr.setStatsOther(fila["leadership"], fila["sharpness"], fila["reputation"])
+            plr.setStatsOther(row["leadership"], row["sharpness"], row["reputation"])
 
-            positions = fila["positions"].replace(" ", "").split(",")
+            positions = row["positions"].replace(" ", "").split(",")
             for position in positions:
                 plr.addPosition(position)
-# loadContracts(path) Loads the Contracts database from the path selected
-def loadContracts(path:str):
+        return file
+def loadContracts(path:str) -> csv.DictReader:
+    """
+    Loads the Contracts database from the path selected
+    | Returns: Database content
+    """
     with open(path, mode="r", encoding="utf-8") as archivo:
-        lector_csv = csv.DictReader(archivo)
+        file = csv.DictReader(archivo)
+        print(file)
 
-        for fila in lector_csv:
-            con = Contract(fila["id"], fila["player"], fila["team"], fila["end"], fila["start"])
-            con.wage = int(fila["wage"])
-            con.number = int(fila["number"])
-            con.setJersey(fila["name"])
+        for row in file:
+            con = Contract(row["id"], row["player"], row["team"], row["end"], row["start"])
+            con.wage = int(row["wage"])
+            con.number = int(row["number"])
+            con.setJersey(row["name"])
+        return file
 
 ########################################################
 # LOAD ORDER
@@ -74,8 +87,11 @@ loadContracts("database/persons/Contracts.csv")
 ########################################################
 
 # DEBUG FUNCTIONS
-# printCard(playerID) Prints the player (id) individual stats and his overall rating
-def printCard(playerID:int):
+def printCard(playerID:int) -> Player:
+    """
+    Prints the player (id) individual stats and his overall rating
+    | Returns: Player object
+    """
     plr = Player.get(playerID)
 
     print(f"{plr.getName()}: {plr.getPlayerOverall()} OVR ({plr.getPositions()[0]["abbreviation"]})")
@@ -85,14 +101,21 @@ def printCard(playerID:int):
     print(f" - Dribbling: {plr.dribbling}")
     print(f" - Defense: {plr.defending}")
     print(f" - Physical: {plr.physical}")
-# printTeam(teamID) Prints players in a team (id)
-def printTeam(teamID:int):
+    return plr
+def printTeam(teamID:int) -> Team:
+    """
+    Prints players in a team (id)
+    | Returns: Team object
+    """
     team = Team.get(teamID)
 
     for player in team.contracts:
         print(team.contracts[player])
-# printSet(set) Prints elements in any set
+    return team
 def printSet(st:set):
+    """
+    Prints elements in any set
+    """
     for element in st:
         print(element)
 
