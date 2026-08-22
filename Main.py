@@ -10,12 +10,12 @@ def loadTeams(path:str):
         lector_csv = csv.DictReader(archivo)
 
         for fila in lector_csv:
-            # fila["name"]
-            tm = Team(fila["id"], fila["name"], fila["nation"], fila["type"])
+            tm = Team(fila["id"], fila["name"], int(fila["nation"]))
             tm.abbreviation = fila["abbreviation"]
             tm.state = fila["state"]
             tm.setFundation(fila["fundation"])
             tm.budget = int(fila["budget"])
+            tm.formationID = int(fila["formation"])
 def loadPlayers(path:str):
     with open(path, mode="r", encoding="utf-8") as archivo:
         lector_csv = csv.DictReader(archivo)
@@ -51,7 +51,6 @@ def loadContracts(path:str):
         lector_csv = csv.DictReader(archivo)
 
         for fila in lector_csv:
-            # fila["name"]
             con = Contract(fila["id"], fila["player"], fila["team"], fila["end"], fila["start"])
             con.wage = int(fila["wage"])
             con.number = int(fila["number"])
@@ -92,3 +91,10 @@ def printTeam(teamID:int):
 
     for player in team.contracts:
         print(team.contracts[player])
+
+def printSet(st:set):
+    for element in st:
+        print(element)
+
+Team.get(1).setFormation(Team.get(1).formationID)
+printSet(Team.get(1).formation.available)

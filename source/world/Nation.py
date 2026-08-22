@@ -20,13 +20,14 @@ def getContinentInfo(id:int=1) -> list:
 nations = {}
 
 import csv
-with open("database/world/Nations.csv", mode="r", encoding="utf-8") as archivo:
-    lector_csv = csv.DictReader(archivo)
+def loadNations(path:str):
+    with open(path, mode="r", encoding="utf-8") as archivo:
+        lector_csv = csv.DictReader(archivo)
 
-    id = 1
-    for fila in lector_csv:
-        nations[id] = fila
-        id += 1
+        for fila in lector_csv:
+            nations[int(fila["id"])] = fila
+
+loadNations("database/world/Nations.csv")
 
 def getNationInfo(id:int=1) -> dict:
     return nations[int(id)]

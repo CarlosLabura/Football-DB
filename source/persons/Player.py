@@ -26,6 +26,8 @@ class Player(Person):
         self.setStatsGoalkeeping(1,1,1)
         self.setStatsOther(1,1,1)
 
+        self.energy = 1
+
         Player.ids[self.id] = self
 
     def __str__(self):
