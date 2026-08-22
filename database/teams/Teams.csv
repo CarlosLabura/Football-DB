@@ -1,3 +1,3 @@
-id,name,abbreviation,nation,state,fundation,budget,formation
-1,Real Madrid CF,RMA,164,Madrid,06/03/1902,170000000,2
-2,FC Barcelona,FCB,164,Barcelona,29/11/1899,90000000,3
+id,name,abbreviation,nation,state,fundation,budget
+1,Real Madrid CF,RMA,164,Madrid,06/03/1902,170000000
+2,FC Barcelona,FCB,164,Barcelona,29/11/1899,90000000

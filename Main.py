@@ -2,9 +2,10 @@
 from source.persons.Player import Player
 from source.teams.Team import Team
 from source.persons.Contract import Contract
-# from source.teams.Transfer import Transfer
 
 import csv
+# in databases in case of repearing the ids the last database loaded will take the place
+# LoadTeams(path) Loads the Teams database from the path selected
 def loadTeams(path:str):
     with open(path, mode="r", encoding="utf-8") as archivo:
         lector_csv = csv.DictReader(archivo)
@@ -15,7 +16,7 @@ def loadTeams(path:str):
             tm.state = fila["state"]
             tm.setFundation(fila["fundation"])
             tm.budget = int(fila["budget"])
-            tm.formationID = int(fila["formation"])
+# loadPlayers(path) Loads the Player database from the path selected
 def loadPlayers(path:str):
     with open(path, mode="r", encoding="utf-8") as archivo:
         lector_csv = csv.DictReader(archivo)
@@ -46,6 +47,7 @@ def loadPlayers(path:str):
             positions = fila["positions"].replace(" ", "").split(",")
             for position in positions:
                 plr.addPosition(position)
+# loadContracts(path) Loads the Contracts database from the path selected
 def loadContracts(path:str):
     with open(path, mode="r", encoding="utf-8") as archivo:
         lector_csv = csv.DictReader(archivo)
@@ -56,25 +58,23 @@ def loadContracts(path:str):
             con.number = int(fila["number"])
             con.setJersey(fila["name"])
 
-# todo:
-# competition
-# match, simulation
-# formations
-# managers, id, playstyle
-# statistics
-
+########################################################
 # LOAD ORDER
 # comps
 # teams
 # players
 # contracts
 # formations
-# managers
+# managers (id, playstyles)
+# statistics
 
 loadTeams("database/teams/Teams.csv")
 loadPlayers("database/persons/Players.csv")
 loadContracts("database/persons/Contracts.csv")
+########################################################
 
+# DEBUG FUNCTIONS
+# printCard(playerID) Prints the player (id) individual stats and his overall rating
 def printCard(playerID:int):
     plr = Player.get(playerID)
 
@@ -85,27 +85,30 @@ def printCard(playerID:int):
     print(f" - Dribbling: {plr.dribbling}")
     print(f" - Defense: {plr.defending}")
     print(f" - Physical: {plr.physical}")
-
+# printTeam(teamID) Prints players in a team (id)
 def printTeam(teamID:int):
     team = Team.get(teamID)
 
     for player in team.contracts:
         print(team.contracts[player])
-
+# printSet(set) Prints elements in any set
 def printSet(st:set):
     for element in st:
         print(element)
 
+""" # EXAMPLE
 barca = Team.get(2)
 barca.setFormation(barca.formationID)
 formation = [
                     [1, 12],
     [5, 16],    [3, 15],   [4, 14],   [2, 13],
-                    [6, 17],
-            [7, 19],        [8, 18],
-    [11, 22],       [10, 21],       [12, 20]
+                    [7, 17],
+            [6, 19],        [8, 18],
+    [11, 22],       [10, 21],       [9, 20]
 ]
 for position in formation:
     barca.formation.changePlayer(position[0], position[1])
 
-print(barca.formation.getPositionInFormation("5"))
+for i in range(1,12):
+    print(barca.formation.getPlayer(i).getName() + ": " + str(barca.formation.getPlayerOverall(i)))
+"""

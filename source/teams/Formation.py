@@ -1,5 +1,5 @@
 import source.persons.Position as Position
-import source.persons.Player as Player
+from source.persons.Player import Player
 import csv
 
 formations = {}
@@ -25,5 +25,9 @@ class Formation:
         self.players[int(position)] = int(player)
         self.changed.add(self.players[int(position)])
 
-    def getPositionInFormation(self, id:int):
+    def getPosition(self, id:int):
         return Position.positions[int(self.formation["pos"+str(id)])]
+    def getPlayer(self, id:int):
+        return Player.get(self.players[int(id)])
+    def getPlayerOverall(self,id:int):
+        return self.getPlayer(id).getOverall(self.getPosition(id)["name"])
