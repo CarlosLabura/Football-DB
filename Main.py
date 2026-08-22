@@ -96,5 +96,16 @@ def printSet(st:set):
     for element in st:
         print(element)
 
-Team.get(1).setFormation(Team.get(1).formationID)
-printSet(Team.get(1).formation.available)
+barca = Team.get(2)
+barca.setFormation(barca.formationID)
+formation = [
+                    [1, 12],
+    [5, 16],    [3, 15],   [4, 14],   [2, 13],
+                    [6, 17],
+            [7, 19],        [8, 18],
+    [11, 22],       [10, 21],       [12, 20]
+]
+for position in formation:
+    barca.formation.changePlayer(position[0], position[1])
+
+print(barca.formation.getPositionInFormation("5"))

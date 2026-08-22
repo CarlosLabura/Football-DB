@@ -21,14 +21,9 @@ class Formation:
         self.changed = set()
 
     def changePlayer(self, position:int, player:int):
-        playerSelected = None
-        for i in range(len(self.available)):
-            if i == int(player):
-                playerSelected = self.available.pop(i)
+        self.available.remove(int(player))
+        self.players[int(position)] = int(player)
+        self.changed.add(self.players[int(position)])
 
-        if playerSelected == None:
-            print("Formation.changePlayer(): No player found")
-            return
-
-        self.changed.append(self.players[int(position)])
-        self.players[int(position)] = playerSelected
+    def getPositionInFormation(self, id:int):
+        return Position.positions[int(self.formation["pos"+str(id)])]
