@@ -53,7 +53,6 @@ def loadContracts(path:str) -> csv.DictReader:
     """ Loads the Contracts database from the path selected | Returns: Database content """
     with open(path, mode="r", encoding="utf-8") as archivo:
         file = csv.DictReader(archivo)
-        print(file)
 
         for row in file:
             con = Contract(row["id"], row["player"], row["team"], row["end"], row["start"])
