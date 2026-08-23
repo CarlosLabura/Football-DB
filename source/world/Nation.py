@@ -14,24 +14,14 @@ continents = {
     11: ["Oceania", "Oceania", "Oc"],
     12: ["Antarctica", "Antarctica", "An"]
 }
-"""
-Continents dict with id ([0]: Subcontinent, [1]: Continent, [2]: Abbreviation)
-"""
+""" Continents dict with id ([0]: Subcontinent, [1]: Continent, [2]: Abbreviation) """
 def getContinentInfo(id:int=1) -> list:
-    """
-    Gets continent dict content by its id
-    | Returns: Continent dict
-    """
+    """ Gets continent dict content by its id | Returns: Continent dict """
     return continents[int(id)]
 nations = {}
-"""
-Nations dict, imported from database ("id", "common_name", "full_name", "abbreviation", "continent_id")
-"""
+""" Nations dict, imported from database ("id", "common_name", "full_name", "abbreviation", "continent_id") """
 def loadNations(path:str) -> csv.DictReader:
-    """
-    Loads the Nations database from the path selected
-    | Returns: Database content
-    """
+    """ Loads the Nations database from the path selected | Returns: Database content """
     with open(path, mode="r", encoding="utf-8") as archivo:
         file = csv.DictReader(archivo)
 
@@ -40,8 +30,5 @@ def loadNations(path:str) -> csv.DictReader:
         return file
 loadNations("database/world/Nations.csv")
 def getNationInfo(id:int=1) -> dict:
-    """
-    Gets nation dict content by its id
-    | Returns: Nation dict
-    """
+    """ Gets nation dict content by its id | Returns: Nation dict """
     return nations[int(id)]

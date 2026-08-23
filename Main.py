@@ -6,25 +6,19 @@ from source.persons.Contract import Contract
 import csv
 # in databases in case of repearing the ids the last database loaded will take the place
 def loadTeams(path:str) -> csv.DictReader:
-    """
-    Loads the Teams database from the path selected
-    | Returns: Database content
-    """
+    """ Loads the Teams database from the path selected | Returns: Database content"""
     with open(path, mode="r", encoding="utf-8") as archivo:
         file = csv.DictReader(archivo)
 
         for row in file:
             tm = Team(row["id"], row["name"], int(row["nation"]))
-            tm.abbreviation = row["abbreviation"]
+            tm.setAbbreviation(row["abbreviation"])
             tm.state = row["state"]
             tm.setFundation(row["fundation"])
             tm.budget = int(row["budget"])
         return file
 def loadPlayers(path:str) -> csv.DictReader:
-    """
-    Loads the Players database from the path selected
-    | Returns: Database content
-    """
+    """ Loads the Players database from the path selected | Returns: Database content """
     with open(path, mode="r", encoding="utf-8") as archivo:
         file = csv.DictReader(archivo)
 
@@ -56,10 +50,7 @@ def loadPlayers(path:str) -> csv.DictReader:
                 plr.addPosition(position)
         return file
 def loadContracts(path:str) -> csv.DictReader:
-    """
-    Loads the Contracts database from the path selected
-    | Returns: Database content
-    """
+    """ Loads the Contracts database from the path selected | Returns: Database content """
     with open(path, mode="r", encoding="utf-8") as archivo:
         file = csv.DictReader(archivo)
         print(file)
@@ -88,10 +79,7 @@ loadContracts("database/persons/Contracts.csv")
 
 # DEBUG FUNCTIONS
 def printCard(playerID:int) -> Player:
-    """
-    Prints the player (id) individual stats and his overall rating
-    | Returns: Player object
-    """
+    """ Prints the player (id) individual stats and his overall rating | Returns: Player object """
     plr = Player.get(playerID)
 
     print(f"{plr.getName()}: {plr.getPlayerOverall()} OVR ({plr.getPositions()[0]["abbreviation"]})")
@@ -103,19 +91,14 @@ def printCard(playerID:int) -> Player:
     print(f" - Physical: {plr.physical}")
     return plr
 def printTeam(teamID:int) -> Team:
-    """
-    Prints players in a team (id)
-    | Returns: Team object
-    """
+    """ Prints players in a team (id) | Returns: Team object """
     team = Team.get(teamID)
 
     for player in team.contracts:
         print(team.contracts[player])
     return team
 def printSet(st:set):
-    """
-    Prints elements in any set
-    """
+    """ Prints elements in any set """
     for element in st:
         print(element)
 
