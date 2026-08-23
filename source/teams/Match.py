@@ -1,6 +1,6 @@
 from source.teams.Team import Team
 from source.persons.Player import Player
-
+# WIP
 class Match:
     def __init__(self, team1ID:int=1, team2ID:int=1):
         self.team1ID = int(team1ID)

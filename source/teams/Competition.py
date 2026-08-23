@@ -1,5 +1,5 @@
 from source.teams.Team import Team
-
+# WIP
 class Competition:
     ids = {}
     def get(id:int=0) -> Competition:
