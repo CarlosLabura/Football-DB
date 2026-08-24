@@ -43,6 +43,7 @@ class Date:
             return
         
         return current.month == date.month and current.day == date.day
+    @staticmethod
     def parse(string:str="1/1/2000") -> Date:
         """ Turns a string type of date ("01/01/2000" for example) into an actual Date object | Returns: Date object transformed """
         string = str(string)

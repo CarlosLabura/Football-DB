@@ -7,22 +7,22 @@ import csv
 # in databases in case of repearing the ids the last database loaded will take the place
 def loadTeams(path:str) -> csv.DictReader:
     """ Loads the Teams database from the path selected | Returns: Database content"""
-    with open(path, mode="r", encoding="utf-8") as archivo:
-        file = csv.DictReader(archivo)
+    with open(path, mode="r", encoding="utf-8") as file:
+        database = csv.DictReader(file)
 
-        for row in file:
+        for row in database:
             tm = Team(row["id"], row["name"], int(row["nation"]))
             tm.setAbbreviation(row["abbreviation"])
             tm.state = row["state"]
             tm.setFundation(row["fundation"])
             tm.budget = int(row["budget"])
-        return file
+        return database
 def loadPlayers(path:str) -> csv.DictReader:
     """ Loads the Players database from the path selected | Returns: Database content """
-    with open(path, mode="r", encoding="utf-8") as archivo:
-        file = csv.DictReader(archivo)
+    with open(path, mode="r", encoding="utf-8") as file:
+        database = csv.DictReader(file)
 
-        for row in file:
+        for row in database:
             plr = Player(row["id"], row["name"], row["surname"], row["birth"])
             plr.commonName = row["commonName"]
 
@@ -48,18 +48,18 @@ def loadPlayers(path:str) -> csv.DictReader:
             positions = row["positions"].replace(" ", "").split(",")
             for position in positions:
                 plr.addPosition(position)
-        return file
+        return database
 def loadContracts(path:str) -> csv.DictReader:
     """ Loads the Contracts database from the path selected | Returns: Database content """
-    with open(path, mode="r", encoding="utf-8") as archivo:
-        file = csv.DictReader(archivo)
+    with open(path, mode="r", encoding="utf-8") as file:
+        database = csv.DictReader(file)
 
-        for row in file:
+        for row in database:
             con = Contract(row["id"], row["player"], row["team"], row["end"], row["start"])
             con.wage = int(row["wage"])
             con.number = int(row["number"])
             con.setJersey(row["name"])
-        return file
+        return database
 
 ########################################################
 # LOAD ORDER
@@ -77,11 +77,11 @@ loadContracts("database/persons/Contracts.csv")
 ########################################################
 
 # DEBUG FUNCTIONS
-def printCard(playerID:int) -> Player:
+def printCard(player:int) -> Player:
     """ Prints the player (id) individual stats and his overall rating | Returns: Player object """
-    plr = Player.get(playerID)
+    plr = Player.get(player)
 
-    print(f"{plr.getName()}: {plr.getPlayerOverall()} OVR ({plr.getPositions()[0]["abbreviation"]})")
+    print(f"{plr.getName()}: {plr.getOverall()} OVR ({plr.getPositions()[0]["abbreviation"]})")
     print(f" - Pace: {plr.pace}")
     print(f" - Shooting: {plr.shooting}")
     print(f" - Passing: {plr.passing}")
@@ -89,17 +89,19 @@ def printCard(playerID:int) -> Player:
     print(f" - Defense: {plr.defending}")
     print(f" - Physical: {plr.physical}")
     return plr
-def printTeam(teamID:int) -> Team:
+def printTeam(team:int) -> Team:
     """ Prints players in a team (id) | Returns: Team object """
-    team = Team.get(teamID)
+    tm = Team.get(team)
 
-    for player in team.contracts:
-        print(team.contracts[player])
-    return team
+    for player in tm.contracts:
+        print(tm.contracts[player])
+    return tm
 def printSet(st:set):
     """ Prints elements in any set """
     for element in st:
         print(element)
+
+printCard(23)
 
 """ # EXAMPLE
 barca = Team.get(2)

@@ -3,20 +3,20 @@ from source.persons.Player import Player
 import csv
 
 formations = {}
-""" Formations dict, imported from database ("id", "formation", "style", "pos1", "pos1x", etc) """
+""" Formations dict, imported from database ("id", "formation", "style", "pos1-11", "pos1-11x", etc) """
 def loadFormations(path:str) -> csv.DictReader:
     """ Loads the Formations database from the path selected | Returns: Database content """
-    with open(path, mode="r", encoding="utf-8") as archivo:
-        file = csv.DictReader(archivo)
+    with open(path, mode="r", encoding="utf-8") as file:
+        database = csv.DictReader(file)
 
-        for row in file:
+        for row in database:
             formations[int(row["id"])] = row
-        return file
+        return database
 loadFormations("database/teams/Formations.csv")
 class Formation:
     def __init__(self, formation:int, players:set) -> Formation:
         """ Starts a Formation object | Returns: self """
-        self.formation = formations[int(formation)]
+        self.formation:dict = formations[int(formation)]
         """ Formation data from formations dict """
         self.available = set(players)
         """ Players (id) available for changing into formation """
@@ -25,10 +25,15 @@ class Formation:
         self.players = {}
         """ Players (id) in current formation, stored by their position IN FORMATION (1-11) (self.players[10] = 21) """
     def changePlayer(self, position:int, player:int):
-        """ Change player (id) selected for the position IN FORMATION (1-11) selected """
+        """ Change player (id) selected for the position IN FORMATION (1-11) selected | Returns: Player object changed or None """
+        plrChanged = self.players[int(position)]
+        if plrChanged != None:
+            plrChanged = Player.get(plrChanged)
+
         self.available.remove(int(player))
         self.players[int(position)] = int(player)
         self.changed.add(self.players[int(position)])
+        return plrChanged
     def getPosition(self, id:int) -> dict:
         """ Get Position dict from the position IN FORMATION (1-11) | Returns: Position dict """
         return Position.positions[int(self.formation["pos"+str(id)])]
