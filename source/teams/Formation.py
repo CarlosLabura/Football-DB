@@ -41,7 +41,7 @@ class Formation:
         """ Returns: Formation object into a readable string """
         string = ""
         for i in range(1,12):
-            string = string + self.getPosition(i)["abbreviation"] + ": " + self.getPlayer(i).getName() + " - "
+            string = string + self.getPosition(i)["abbreviation"] + ": " + self.getPlayer(i).getName() + "\n"
 
         return string
     def changePlayer(self, position:int, player:int):

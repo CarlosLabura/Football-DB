@@ -36,7 +36,7 @@ class Player(Person):
         Player.ids[self.id] = self
     def __str__(self):
         """ Returns: Player object into a readable string: "Marc Cucurella (2): 86 OVR ['LB', 'LM'], Spain, 22/7/1998 (27)" """
-        return f"{self.getName()} ({self.id}): {self.getOverall()} OVR {[x["abbreviation"] for x in self.getPositions()]}, {self.getNationsInfo()[0]["common_name"]}, {self.birth} ({self.age()})"
+        return f"{self.getName()} ({self.id}): {self.getOverall()} OVR {[x["abbreviation"] for x in self.getPositions()]}, {self.getNationsInfo()[0]["common_name"]}, {self.birth} ({self.age()})\n - Pace: {self.pace}\n - Shooting: {self.shooting}\n - Passing: {self.passing}\n - Dribbling: {self.dribbling}\n - Defense: {self.defending}\n - Physical: {self.physical}"
     def addPosition(self, name:str) -> dict:
         """ Adds a position this player can play | Returns: Position dict """
         self.positions.add(name)

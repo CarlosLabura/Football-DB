@@ -6,6 +6,12 @@ from source.persons.Contract import Contract
 from source.teams.Match import Match
 
 import csv
+
+def printSet(st:set):
+    """ Prints elements in any set """
+    for element in st:
+        print(element)
+
 # in databases in case of repearing the ids the last database loaded will take the place
 def loadTeams(path:str) -> csv.DictReader:
     """ Loads the Teams database from the path selected | Returns: Database content"""
@@ -78,9 +84,9 @@ def loadTeamsFormation(path:str) -> csv.DictReader:
 # comps
 # teams
 # players
+# managers (id, playstyles)
 # contracts
 # formations
-# managers (id, playstyles)
 # statistics
 
 loadTeams("database/teams/Teams.csv")
@@ -88,30 +94,3 @@ loadPlayers("database/persons/Players.csv")
 loadContracts("database/persons/Contracts.csv")
 loadTeamsFormation("database/teams/TeamsFormation.csv")
 ########################################################
-
-# DEBUG FUNCTIONS
-def printCard(player:int) -> Player:
-    """ Prints the player (id) individual stats and his overall rating | Returns: Player object """
-    plr = Player.get(player)
-
-    print(plr)
-    print(f" - Pace: {plr.pace}")
-    print(f" - Shooting: {plr.shooting}")
-    print(f" - Passing: {plr.passing}")
-    print(f" - Dribbling: {plr.dribbling}")
-    print(f" - Defense: {plr.defending}")
-    print(f" - Physical: {plr.physical}")
-    return plr
-def printTeam(team:int) -> Team:
-    """ Prints players in a team (id) | Returns: Team object """
-    tm = Team.get(team)
-
-    for player in tm.contracts:
-        print(tm.contracts[player])
-    return tm
-def printSet(st:set):
-    """ Prints elements in any set """
-    for element in st:
-        print(element)
-
-print(Team.get(1).formation)
