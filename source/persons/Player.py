@@ -151,4 +151,3 @@ class Player(Person):
         self.leadership = int(leadership or self.leadership)
         self.sharpness = int(sharpness or self.sharpness)
         self.reputation = int(reputation or self.reputation)
-Player(0, "Juan", "Gonzalez", "1/1/2000")

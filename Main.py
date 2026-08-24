@@ -63,6 +63,7 @@ def loadContracts(path:str) -> csv.DictReader:
             con.setJersey(row["name"])
         return database
 def loadTeamsFormation(path:str) -> csv.DictReader:
+    """ Loads Team formations database from the path selected | Returns: Database content """
     with open(path, mode="r", encoding="utf-8") as file:
         database = csv.DictReader(file)
 
@@ -113,22 +114,4 @@ def printSet(st:set):
     for element in st:
         print(element)
 
-
-""" 
-MADRID
-379
-493
-322
-
-BARCA
-432
-573
-309
-"""
-
-
-
-for i in range(1,100):
-    mtch = Match(1,2)
-    mtch.simulate()
-    print(mtch)
+print(Team.get(1).formation)

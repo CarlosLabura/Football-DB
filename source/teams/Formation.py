@@ -37,6 +37,13 @@ class Formation:
             11: None,
         }
         """ Players (id) in current formation, stored by their position IN FORMATION (1-11) (self.players[10] = 21) """
+    def __str__(self):
+        """ Returns: Formation object into a readable string """
+        string = ""
+        for i in range(1,12):
+            string = string + self.getPosition(i)["abbreviation"] + ": " + self.getPlayer(i).getName() + " - "
+
+        return string
     def changePlayer(self, position:int, player:int):
         """ Change player (id) selected for the position IN FORMATION (1-11) selected | Returns: Player object changed or None """
         plrChanged = self.players[int(position)]

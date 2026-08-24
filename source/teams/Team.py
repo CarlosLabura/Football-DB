@@ -51,4 +51,3 @@ class Team:
             return Nation.getNationInfo(self.nation)
         print(f"Team.getNationInfo({self.id}): No nation assigned, returning None")
         return None
-Team(0, "Free Agents", 186)
