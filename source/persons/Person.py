@@ -11,11 +11,11 @@ class Person:
         """ Name used over the full name """
         self.birth = Date.parse(str(birth))
         self.setBody(180, 80)
-        self.nationsID = set()
+        self.nations = set()
         """ Persons nations id in a set, use GetNationsInfo() to get Nations dict """
     def __str__(self):
         """ Returns: Person object into a readable string: "Juan Gonzalez, 1/1/2000 (26)" """
-        return f"{self.getName()}, {self.getNationsInfo()[0]["common_name"]},{self.birth} ({self.age()})"
+        return f"{self.getName()}, {self.getNationsInfo()[0]["common_name"]}, {self.birth} ({self.age()})"
     def getName(self) -> str:
         """ Returns: Full name or Common name string """
         if self.commonName != "":
@@ -30,16 +30,16 @@ class Person:
             print(f"Person.addNation({self.getName()}): Nation unknown, Setting automatically to 1 (Afghanistan)")
             nation = 1
             
-        self.nationsID.add(nation)
+        self.nations.add(nation)
         return Nation.getNationInfo(nation)
     def getNationsInfo(self) -> list:
         """ Returns: List of nation dicts of the person """
-        if len(self.nationsID) < 1:
+        if len(self.nations) < 1:
             print(f"Person.getNationsInfo({self.getName()}): Person has no nations assigned, returning None")
             return None
 
         nationsInfo = []
-        for nation in self.nationsID:
+        for nation in self.nations:
             nationsInfo.append(Nation.getNationInfo(nation))
 
         return nationsInfo

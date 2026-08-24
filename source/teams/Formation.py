@@ -1,6 +1,7 @@
 import source.persons.Position as Position
 from source.persons.Player import Player
 import csv
+import math
 
 formations = {}
 """ Formations dict, imported from database ("id", "formation", "style", "pos1-11", "pos1-11x", etc) """
@@ -22,7 +23,19 @@ class Formation:
         """ Players (id) available for changing into formation """
         self.changed = set()
         """ Players (id) changed from formation with changePlayer() """
-        self.players = {}
+        self.players = {
+            1: None,
+            2: None,
+            3: None,
+            4: None,
+            5: None,
+            6: None,
+            7: None,
+            8: None,
+            9: None,
+            10: None,
+            11: None,
+        }
         """ Players (id) in current formation, stored by their position IN FORMATION (1-11) (self.players[10] = 21) """
     def changePlayer(self, position:int, player:int):
         """ Change player (id) selected for the position IN FORMATION (1-11) selected | Returns: Player object changed or None """
@@ -42,4 +55,16 @@ class Formation:
         return Player.get(self.players[int(id)])
     def getPlayerOverall(self,id:int) -> int:
         """ Get Player overall for the position IN FORMATION (1-11) they are playing | Returns: Player overall int """
-        return self.getPlayer(id).getOverall(self.getPosition(id)["name"])
+        return self.getPlayer(id).getPositionOverall(self.getPosition(id)["name"])
+    def getMultipliers(self, id:int) -> list:
+        """ Gets Defense, Passing, Attacking multiplier for the position IN FORMATION (1-11) | Returns: List with the multipliers in order [0, 0.5, 1] """
+        return list(map(float, self.formation["pos" + str(id) + "x"].split("|")))
+    def getPoints(self, section:int) -> list:
+        """ Gets a list with the points each section of the team has (1: Defense, 2: Passing, 3: Attacking) | Returns: List with points in sections """
+        section = max(1, min(3, int(section)))
+        teamMults = []
+        for i in range(2,12):
+            teamMults.append(math.ceil(self.getPlayerOverall(i) * self.getMultipliers(i)[section-1] * self.getPlayer(i).energy))
+
+        return math.ceil(sum(teamMults))
+        

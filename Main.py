@@ -1,7 +1,9 @@
 
 from source.persons.Player import Player
 from source.teams.Team import Team
+from source.teams.Formation import Formation
 from source.persons.Contract import Contract
+from source.teams.Match import Match
 
 import csv
 # in databases in case of repearing the ids the last database loaded will take the place
@@ -60,6 +62,15 @@ def loadContracts(path:str) -> csv.DictReader:
             con.number = int(row["number"])
             con.setJersey(row["name"])
         return database
+def loadTeamsFormation(path:str) -> csv.DictReader:
+    with open(path, mode="r", encoding="utf-8") as file:
+        database = csv.DictReader(file)
+
+        for row in database:
+            form = Team.get(row["team"]).setFormation(row["formation"])
+            for i in range(1,12):
+                form.changePlayer(i, row["pos"+str(i)])
+        return database
 
 ########################################################
 # LOAD ORDER
@@ -74,6 +85,7 @@ def loadContracts(path:str) -> csv.DictReader:
 loadTeams("database/teams/Teams.csv")
 loadPlayers("database/persons/Players.csv")
 loadContracts("database/persons/Contracts.csv")
+loadTeamsFormation("database/teams/TeamsFormation.csv")
 ########################################################
 
 # DEBUG FUNCTIONS
@@ -81,7 +93,7 @@ def printCard(player:int) -> Player:
     """ Prints the player (id) individual stats and his overall rating | Returns: Player object """
     plr = Player.get(player)
 
-    print(f"{plr.getName()}: {plr.getOverall()} OVR ({plr.getPositions()[0]["abbreviation"]})")
+    print(plr)
     print(f" - Pace: {plr.pace}")
     print(f" - Shooting: {plr.shooting}")
     print(f" - Passing: {plr.passing}")
@@ -101,21 +113,22 @@ def printSet(st:set):
     for element in st:
         print(element)
 
-printCard(23)
 
-""" # EXAMPLE
-barca = Team.get(2)
-barca.setFormation(barca.formationID)
-formation = [
-                    [1, 12],
-    [5, 16],    [3, 15],   [4, 14],   [2, 13],
-                    [7, 17],
-            [6, 19],        [8, 18],
-    [11, 22],       [10, 21],       [9, 20]
-]
-for position in formation:
-    barca.formation.changePlayer(position[0], position[1])
+""" 
+MADRID
+379
+493
+322
 
-for i in range(1,12):
-    print(barca.formation.getPlayer(i).getName() + ": " + str(barca.formation.getPlayerOverall(i)))
+BARCA
+432
+573
+309
 """
+
+
+
+for i in range(1,100):
+    mtch = Match(1,2)
+    mtch.simulate()
+    print(mtch)

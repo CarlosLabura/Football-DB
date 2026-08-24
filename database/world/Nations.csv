@@ -183,7 +183,7 @@ id,common_name,full_name,abbreviation,continent_id
 182,Uganda,Republic of Uganda,UG,7
 183,Ukraine,Ukraine,UA,5
 184,United Arab Emirates,United Arab Emirates,AE,9
-185,England,England,GB,4
+185,England,England,EN,4
 186,United States,United States of America,US,1
 187,Uruguay,Oriental Republic of Uruguay,UY,3
 188,Uzbekistan,Republic of Uzbekistan,UZ,9
@@ -194,3 +194,8 @@ id,common_name,full_name,abbreviation,continent_id
 193,Yemen,Republic of Yemen,YE,9
 194,Zambia,Republic of Zambia,ZM,7
 195,Zimbabwe,Republic of Zimbabwe,ZW,7
+196,Scotland,Scotland,SCO,4
+197,Wales,Wales,WAL,4
+198,Northern Ireland,Northern Ireland,NIR,4
+199,Palestine,State of Palestine,PS,9
+200,Taiwan,Republic of China,TW,10

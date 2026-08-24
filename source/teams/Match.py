@@ -1,39 +1,54 @@
 from source.teams.Team import Team
-from source.persons.Player import Player
-# WIP
+import random
+import math
+
 class Match:
-    def __init__(self, team1ID:int=1, team2ID:int=1):
-        self.team1ID = int(team1ID)
-        self.team1Goals = 0
+    def __init__(self, team1:int=1, team2:int=1):
+        """ Starts a Match object | Returns: self """
+        self.teams = [Team.get(int(team1)), Team.get(int(team2))]
+        # teams[0]: Local team - teams[1]: Away team
+        self.score = [0,0]
+        self.factor = random.uniform(0.75, 1.35)
+        # Random factor for match simulation
+    def __str__(self):
+        """ Returns: Match object into a readable string: "Real Madrid CF 2 - 3 FC Barcelona" """
+        return f"{self.teams[0].name} {self.score[0]} - {self.score[1]} {self.teams[1].name}"
+    def poisson(self, lam) -> int:
+        """ Takes expected goals and turns them into a random number | Returns: Random goals """
+        L = math.exp(-lam)
+        k = 0
+        p = 1
 
-        self.team2ID = int(team2ID)
-        self.team2Goals = 0
+        while p > L:
+            k += 1
+            p *= random.random()
 
-        self.goals = []
-        
-        self.simulate()
+        return k - 1
+    def getTeamStrenght(self, team:int) -> int:
+        """ Calculates team strenght by their section points | Returns: Team strenght int """
+        team = max(1, min(2, int(team)))
+        oppTeam = 2
+        if team == 2: 
+            oppTeam = 1
 
-    def simulate(self):
-        pass
+        return (
+            self.teams[team-1].formation.getPoints(3) * 0.5 +
+            self.teams[team-1].formation.getPoints(2) * 0.35 + 
+            self.teams[team-1].formation.getPoints(1) * 0.15 -
+            self.teams[oppTeam-1].formation.getPoints(1) * 0.3
+        )
+    def getExpectedGoals(self, team:int) -> float:
+        """ Calculates expected goals for a eam | Returns: Expected goals float """
+        return self.getTeamStrenght(team) / (175 * self.factor)
+    def simulate(self) -> Team:
+        """ Simluates events in a match | Returns: Winner Team object or None if they tie """
+        self.score[0] = self.poisson(self.getExpectedGoals(1))
+        self.score[1] = self.poisson(self.getExpectedGoals(2))
 
-    def getScore(self) -> str:
-        return f"{self.team1Goals} - {self.team2Goals}"
-
-    def goal(self, scorerID:int=1, assisterID:int=1):
-        scorerID = int(scorerID)
-        scorer = Player.get(scorerID)
-
-        types = ["clubs", "national", "other"]
-
-        fromTeam2 = False
-        for typ in types:
-            if scorer.teams[types[typ]]["id"] == self.team2ID:
-                fromTeam2 = True
-                break
-
-        if fromTeam2:
-            self.team2Goals += 1
+        if self.score[1] > self.score[0]:
+            return self.teams[1]
+        elif self.score[0] > self.score[1]:
+            return self.teams[0]
         else:
-            self.team1Goals += 1
-            
-        self.goals.append([scorerID, int(assisterID)])
+            return None
+        
