@@ -7,13 +7,13 @@ class Match:
     def __init__(self, team1:int=1, team2:int=1, simulate:bool=False):
         """ Starts a Match object | Returns: self """
         self.teams = [Team.get(int(team1)), Team.get(int(team2))]
-        """ [0]: Local team - 1]: Away team """ 
+        """ [0]: Local team - [1]: Away team """ 
         self.score = [0,0]
         self.forcedScore = None
         """ Forced score, goals will automatically simulate from this result"""
         self.penals = [0,0]
         """ Penalties scored in penalty shootouts """
-        self.factor = random.uniform(0.75, 1.75) #
+        self.factor = random.uniform(0.75, 1.75)
         """ Random factor for match simulation (0: crazy result, 2: normal result) """ 
         self.goals = []
         """  [0] Goal scorer [1] assistant [2] their team (1-2) [3] time """ 
@@ -34,7 +34,6 @@ class Match:
             self.simulate()
     def __str__(self):
         """ Returns: Match object into a readable string """
-
         showEvents = False
 
         scorers = ""
@@ -178,13 +177,13 @@ class Match:
         for i in range(5):
             shootPenality(1)
 
-            remain2 = 5 - i # Penalties remaining for team 2
+            remain2 = 5 - i
             if self.penals[0] > self.penals[1] + remain2:
                 return self.teams[0]
 
             shootPenality(2)
 
-            remain1 = 4 - i # Penalties remaining for team 1
+            remain1 = 4 - i
             if self.penals[1] > self.penals[0] + remain1:
                 return self.teams[1]
 
