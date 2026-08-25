@@ -94,10 +94,3 @@ loadPlayers("database/persons/Players.csv")
 loadContracts("database/persons/Contracts.csv")
 loadTeamsFormation("database/teams/TeamsFormation.csv")
 ########################################################
-
-mtch = Match(1,2)
-mtch.extra = True
-mtch.penalties = True
-mtch.simulate()
-print(mtch)
-mtch.printPenalties()

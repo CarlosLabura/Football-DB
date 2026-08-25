@@ -4,17 +4,17 @@ import random
 import math
 
 class Match:
-    def __init__(self, team1:int=1, team2:int=1):
+    def __init__(self, team1:int=1, team2:int=1, simulate:bool=False):
         """ Starts a Match object | Returns: self """
         self.teams = [Team.get(int(team1)), Team.get(int(team2))]
         """ [0]: Local team - 1]: Away team """ 
         self.score = [0,0]
         self.forcedScore = None
-        """ Forced score """
+        """ Forced score, goals will automatically simulate from this result"""
         self.penals = [0,0]
         """ Penalties scored in penalty shootouts """
-        self.factor = random.uniform(0.75, 1)
-        """ Random factor for match simulation """ 
+        self.factor = random.uniform(0.75, 1.75) #
+        """ Random factor for match simulation (0: crazy result, 2: normal result) """ 
         self.goals = []
         """  [0] Goal scorer [1] assistant [2] their team (1-2) [3] time """ 
         self.cards = []
@@ -30,14 +30,20 @@ class Match:
         """ Go to penalties if teams tie """
         self.penaltiesTaken = []
         """ [0] Player [1] Team [2] Was goal """
+        if bool(simulate):
+            self.simulate()
     def __str__(self):
         """ Returns: Match object into a readable string """
-        scorers = ""
-        for scorer in self.goals:
-            scorers = scorers + f" - GOAL: {Player.get(scorer[0]).getName()} ({self.teams[scorer[2]].name}) {scorer[3]}'\n"
 
-        if self.penalties and self.score[0] == self.score[1]:
-            return f"{self.teams[0].name} {self.score[0]} ({self.penals[0]}) - ({self.penals[1]}) {self.score[1]} {self.teams[1].name} \n{scorers}"
+        showEvents = False
+
+        scorers = ""
+        if showEvents:
+            for scorer in self.goals:
+                scorers = scorers + f" - GOAL: {Player.get(scorer[0]).getName()} ({self.teams[scorer[2]].name}) {scorer[3]}'\n"
+
+            if self.penalties and self.score[0] == self.score[1]:
+                return f"{self.teams[0].name} {self.score[0]} ({self.penals[0]}) - ({self.penals[1]}) {self.score[1]} {self.teams[1].name} \n{scorers}"
 
         return f"{self.teams[0].name} {self.score[0]} - {self.score[1]} {self.teams[1].name} \n{scorers}"
     def poisson(self, lam) -> int:
