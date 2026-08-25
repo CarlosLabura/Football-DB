@@ -46,6 +46,8 @@ class Formation:
         return string
     def changePlayer(self, position:int, player:int):
         """ Change player (id) selected for the position IN FORMATION (1-11) selected | Returns: Player object changed or None """
+        position = max(1, min(11, int(position)))
+
         plrChanged = self.players[int(position)]
         if plrChanged != None:
             plrChanged = Player.get(plrChanged)
@@ -54,17 +56,29 @@ class Formation:
         self.players[int(position)] = int(player)
         self.changed.add(self.players[int(position)])
         return plrChanged
+    def getPlayerList(self) -> list:
+        """ Returns: Player id list in formation """
+        playerList = []
+
+        for player in self.players:
+            playerList.append(player+1)
+
+        return playerList
     def getPosition(self, id:int) -> dict:
         """ Get Position dict from the position IN FORMATION (1-11) | Returns: Position dict """
+        id = max(1, min(11, int(id)))
         return Position.positions[int(self.formation["pos"+str(id)])]
     def getPlayer(self, id:int) -> Player:
         """ Get Player object from the position IN FORMATION (1-11) | Returns: Player object """
+        id = max(1, min(11, int(id)))
         return Player.get(self.players[int(id)])
     def getPlayerOverall(self,id:int) -> int:
         """ Get Player overall for the position IN FORMATION (1-11) they are playing | Returns: Player overall int """
+        id = max(1, min(11, int(id)))
         return self.getPlayer(id).getPositionOverall(self.getPosition(id)["name"])
     def getMultipliers(self, id:int) -> list:
         """ Gets Defense, Passing, Attacking multiplier for the position IN FORMATION (1-11) | Returns: List with the multipliers in order [0, 0.5, 1] """
+        id = max(1, min(11, int(id)))
         return list(map(float, self.formation["pos" + str(id) + "x"].split("|")))
     def getPoints(self, section:int) -> list:
         """ Gets a list with the points each section of the team has (1: Defense, 2: Passing, 3: Attacking) | Returns: List with points in sections """
@@ -74,4 +88,17 @@ class Formation:
             teamMults.append(math.ceil(self.getPlayerOverall(i) * self.getMultipliers(i)[section-1] * self.getPlayer(i).energy))
 
         return math.ceil(sum(teamMults))
+    def getTeamPoints(self, section:int) -> list:
+        """ Gets a list with the points each section of the team has (1: Defense, 2: Passing, 3: Attacking) | Returns: List with points in sections """
+        section = max(1, min(3, int(section)))
+        teamMults = []
+        for i in range(1,12):
+            teamMults.append(math.ceil(self.getPlayerOverall(i) * self.getMultipliers(i)[section-1] * self.getPlayer(i).energy))
+
+        return teamMults
+    def getPlayerPoints(self, id:int, section:int) -> int:
+        """ Returns: Points of the player for their position IN FORMATION (1-11) """
+        id = max(1, min(11, int(id)))
+        section = max(1, min(3, int(section)))
+        return math.ceil(self.getPlayerOverall(id) * self.getMultipliers(id)[section-1] * self.getPlayer(id).energy)
         
