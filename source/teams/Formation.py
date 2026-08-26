@@ -21,8 +21,8 @@ class Formation:
         """ Formation data from formations dict """
         self.available = set(players)
         """ Players (id) available for changing into formation """
-        self.changed = set()
-        """ Players (id) changed from formation with changePlayer() """
+        self.changed = []
+        """ Players (id) changed from formation with changePlayer() [Player (id) who entered, Player (id) who left]"""
         self.players = {
             1: None,
             2: None,
@@ -54,7 +54,9 @@ class Formation:
 
         self.available.remove(int(player))
         self.players[int(position)] = int(player)
-        self.changed.add(self.players[int(position)])
+
+        if plrChanged != None:
+            self.changed.append([player, plrChanged.id])
         return plrChanged
     def getPlayerList(self) -> list:
         """ Returns: Player id list in formation """
