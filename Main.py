@@ -77,6 +77,7 @@ def loadTeamsFormation(path:str) -> csv.DictReader:
             form = Team.get(row["team"]).setFormation(row["formation"])
             for i in range(1,12):
                 form.changePlayer(i, row["pos"+str(i)], True)
+            
         return database
 
 ########################################################

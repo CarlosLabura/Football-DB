@@ -41,6 +41,7 @@ class Match:
         """ [0] Player [1] Team [2] Was goal """
 
         self.showEvents = bool(True)
+        """ Show match events in print """
     
         if bool(simulate):
             self.simulate()
@@ -221,7 +222,6 @@ class Match:
     def penaltyShootout(self) -> Team:
         """ In case of tie, untie with a penalty shootout | Return: Winning Team object"""
         exclude = [[], []]
-
         def shootPenality(team: int) -> bool:
             """ Returns: Penalty accerted """
             team = max(1, min(2, int(team)))

@@ -22,6 +22,7 @@ class Formation:
         self.available = set(players)
         """ Players (id) available for changing into formation """
         self.team = set(players)
+        """ All players in team """
         self.changed = []
         """ Players (id) changed from formation with changePlayer() [Player (id) who entered, Player (id) who left]"""
         self.players = {
@@ -37,7 +38,7 @@ class Formation:
             10: None,
             11: None,
         }
-        """ Players (id) in current formation, stored by their position IN FORMATION (1-11) (self.players[10] = 21) """
+        """ Players (id) in CURRENT formation, stored by their position IN FORMATION (1-11) (self.players[10] = 21) """
         self.starter = {
             1: None,
             2: None,
@@ -51,6 +52,7 @@ class Formation:
             10: None,
             11: None,
         }
+        """ Starter team """
     def __str__(self):
         """ Returns: Formation object into a readable string """
         string = ""
@@ -60,9 +62,10 @@ class Formation:
         return string
     def reset(self):
         """ Reset formation """
-        self.players = self.starter
         self.changed = []
         self.available = self.team
+        for i in range(1,12):
+            self.changePlayer(i, self.starter[i], True)
     def changePlayer(self, position:int, player:int, starter:bool = False):
         """ Change player (id) selected for the position IN FORMATION (1-11) selected | Returns: Player object changed or None """
         position = max(1, min(11, int(position)))
@@ -76,7 +79,7 @@ class Formation:
         if starter:
             self.starter[int(position)] = int(player)
         else:
-            self.changed.append([player, plrChanged.id])
+            self.changed.append([int(player), plrChanged.id])
         return plrChanged
     def getPlayerList(self) -> list:
         """ Returns: Player id list in formation """
