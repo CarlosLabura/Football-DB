@@ -3,10 +3,19 @@ from source.persons.Player import Player
 import random
 import math
 
+
+class Event:
+    Goal = 1
+    Sub = 2
+    Card = 2
+    Injury = 4
+
 class Match:
-    def __init__(self, team1:int=1, team2:int=1, simulate:bool=False):
+    def __init__(self, team1:int=1, team2:int=1, simulate:bool=False) -> Match:
         """ Starts a Match object | Returns: self """
         self.teams = [Team.get(int(team1)), Team.get(int(team2))]
+        self.teams[0].formation.reset()
+        self.teams[1].formation.reset()
         """ [0]: Local team - [1]: Away team """ 
         self.score = [0,0]
         self.forcedScore = None
@@ -15,12 +24,12 @@ class Match:
         """ Penalties scored in penalty shootouts """
         self.factor = random.uniform(0.75, 1.75)
         """ Random factor for match simulation (0: crazy result, 2: normal result) """ 
-        self.goals = []
-        """  [0] Goal scorer [1] assistant [2] their team (1-2) [3] time """ 
-        self.cards = []
-        """  [0] Player [1] Yellow (1) / Red (2) cards [2] Team (1-2) [3] time """ 
-        self.injuries = []
-        """  [0] Player [1] Injury [2] Team (1-2) [3] time """ 
+
+        self.events = []
+        """ Events of the match ("type", "player", "team", "time", "info") ("info" depends on the event)  """
+
+        self.windows = [int(3), int(3)]
+        self.subs = [int(5), int(5)]
 
         self.minutes = int(90)
         self.minutesExtra = int(120)
@@ -30,21 +39,25 @@ class Match:
         """ Go to penalties if teams tie """
         self.penaltiesTaken = []
         """ [0] Player [1] Team [2] Was goal """
+
+        self.showEvents = bool(True)
+    
         if bool(simulate):
             self.simulate()
     def __str__(self):
-        """ Returns: Match object into a readable string """
-        showEvents = False
+        """ Returns: Match object into a readable string and show events if asked """
+        events = ""
+        if self.showEvents:
+            for event in self.events:
+                if event["type"]  == Event.Goal:
+                    events = events + f" - GOAL: {Player.get(event["player"]).getName()} ({self.teams[event["team"]].name}) {event["time"]}'\n"
+                elif event["type"] == Event.Sub:
+                    events = events + f" - SUB: <- {Player.get(event["info"]).getName()} | -> {Player.get(event["player"]).getName()} {event["time"]}'\n"
+                
+        if self.penalties and self.score[0] == self.score[1]:
+                return f"{self.teams[0].name} {self.score[0]} ({self.penals[0]}) - ({self.penals[1]}) {self.score[1]} {self.teams[1].name} \n{events}"
 
-        scorers = ""
-        if showEvents:
-            for scorer in self.goals:
-                scorers = scorers + f" - GOAL: {Player.get(scorer[0]).getName()} ({self.teams[scorer[2]].name}) {scorer[3]}'\n"
-
-            if self.penalties and self.score[0] == self.score[1]:
-                return f"{self.teams[0].name} {self.score[0]} ({self.penals[0]}) - ({self.penals[1]}) {self.score[1]} {self.teams[1].name} \n{scorers}"
-
-        return f"{self.teams[0].name} {self.score[0]} - {self.score[1]} {self.teams[1].name} \n{scorers}"
+        return f"{self.teams[0].name} {self.score[0]} - {self.score[1]} {self.teams[1].name} \n{events}"
     def poisson(self, lam) -> int:
         """ Takes expected goals and turns them into a random number | Returns: Random goals """
         L = math.exp(-lam)
@@ -73,7 +86,7 @@ class Match:
     def getExpectedGoals(self, team:int) -> float:
         """ Calculates expected goals for a eam | Returns: Expected goals float """
         return self.getTeamStrenght(team) / (175 * self.factor)
-    def getRandomPlayerBySection(self, team: int, section: int, excluded: list = None) -> int:
+    def getRandomPlayer(self, team: int, section: int, excluded: list = None) -> int:
         """ Chooses a random player depending on the play section (Defending, Passing, Attacking) | Returns: Random Player id """
         team = max(1, min(2, int(team)))
         section = max(1, min(3, int(section)))
@@ -108,8 +121,27 @@ class Match:
             weights=weights,
             k=1
         )[0]
-    def simulate(self) -> Team:
-        """ Simluates events in a match | Returns: Winner Team object or None if they tie """
+    def getBestPlayer(self, team:int, position:int) -> int:
+        """ Returns: Best sub player (id) available for a position """
+        team = max(1, min(2, int(team)))-1
+        bestPlayer:Player
+        first = True
+
+        outlist = []
+        for out in self.teams[team].formation.changed:
+            outlist.append(out[1])
+            
+        for player in self.teams[team].formation.available:
+            if first:
+                bestPlayer = Player.get(player)
+                first = False
+            if Player.get(player).getPositionOverall(self.teams[team].formation.getPosition(position)["name"]) > bestPlayer.getPositionOverall(self.teams[team].formation.getPosition(position)["name"]) and Player.get(player).id not in outlist:
+                bestPlayer = Player.get(player)
+
+        return bestPlayer.id
+    def simulateEvents(self, start:int, end:int):
+        start = int(start)
+        end = int(end)
 
         matchGoals = [0,0]
         if self.forcedScore != None:
@@ -120,19 +152,28 @@ class Match:
             matchGoals[1] = self.poisson(self.getExpectedGoals(2))
 
         for team in range(1,3):
-            for i in range(matchGoals[team-1]):
-                self.goal(team, self.getRandomPlayerBySection(team, 3), self.getRandomPlayerBySection(team, 2), random.randint(1, self.minutes))
+            # GOALS
+            for _ in range(matchGoals[team-1]):
+                self.goal(team, self.getRandomPlayer(team, 3), self.getRandomPlayer(team, 2), random.randint(start, end))
+
+            # SUBS
+            windows = random.randint(0, self.windows[team-1])
+            self.windows[team-1] -= windows
+            for _ in range(self.windows[team-1]):
+                minute = random.randint(int(end/2), end)
+                for i in range(random.randint(0, self.subs[team-1])):
+                    if random.randint(1, 100) == 1:
+                        self.sub(team, 1, self.getBestPlayer(team, 1), minute)
+                    else:
+                        position = random.randint(2, 11)
+                        self.sub(team, position, self.getBestPlayer(team, position), minute)
+    def simulate(self) -> Team:
+        """ Simluates events in a match | Returns: Winner Team object or None if they tie """
+        self.simulateEvents(1, self.minutes)
 
         if self.extra and self.score[0] == self.score[1]:
             self.factor = random.uniform(0.5, 1)
-
-            if self.forcedScore == None:
-                matchGoals[0] = self.poisson(self.getExpectedGoals(1))
-                matchGoals[1] = self.poisson(self.getExpectedGoals(2))
-
-            for team in range(1,3):
-                for i in range(int(matchGoals[team-1]/3)):
-                    self.goal(team, self.getRandomPlayerBySection(team, 3), self.getRandomPlayerBySection(team, 2), random.randint(self.minutes, self.minutesExtra))
+            self.simulateEvents(self.minutes, self.minutesExtra)
 
         if self.penalties and self.score[0] == self.score[1]:
             return self.penaltyShootout()
@@ -143,16 +184,40 @@ class Match:
             return self.teams[0]
         else:
             return None
+    def event(self, type:int, player:int, team:int, time:int, info) -> dict:
+        """ Adds an event to the events list | Returns: Event dict """
+        team = max(1, min(2, int(team)))-1
+        data = {
+            "type": int(type),
+            "player": int(player),
+            "team": team+1,
+            "time": int(time),
+            "info": info
+        }
+        self.events.append(data)
+        self.events.sort(key=lambda event: event["time"])
+        return data
+    def fixEvents(self, time:int):
+        """ Changes the events of a player from ceratin time """
+        for event in self.events:
+            if event["time"] > int(time):
+                for change in self.teams[event["team"]-1].formation.changed:
+                    if event["player"] == change[1]:
+                        event["player"] = change[0]
     def goal(self, team:int, player:int, asistant:int, time:int) -> Player:
         """ Scores a goal, setting a player as the scorer | Returns: Scorer Player object """
         team = max(1, min(2, int(team)))-1
         self.score[team] += 1
-        self.goals.append([int(player), int(asistant), team, int(time)])
-        self.goals.sort(key=lambda goal: goal[3])
+        self.event(Event.Goal, player, team, time, int(asistant))
         return Player.get(int(player))
-    def printPenalties(self):
-        for penalty in self.penaltiesTaken:
-            print(f"{Player.get(penalty[0]).getName()} ({Team.get(penalty[1]).name}): {penalty[2]}")
+    def sub(self, team:int, position:int, player:int, time:int) -> Player:
+        """ Sub a player into the formation of a team | Returns: Subbed out Player object """
+        team = max(1, min(2, int(team)))-1
+        sub = self.teams[team].formation.changePlayer(position, player)
+        self.subs[team] -= 1
+        self.event(Event.Sub, player, team, time, sub.id)
+        self.fixEvents(time)
+        return sub
     def penaltyShootout(self) -> Team:
         """ In case of tie, untie with a penalty shootout | Return: Winning Team object"""
         exclude = [[], []]
@@ -164,7 +229,7 @@ class Match:
             if len(exclude[team-1]) >= 11:
                 exclude[team-1].clear()
 
-            player = self.getRandomPlayerBySection(team, 3, exclude[team-1])
+            player = self.getRandomPlayer(team, 3, exclude[team-1])
             penalty = random.random() < 0.50 + Player.get(player).shooting * 0.003
             self.penaltiesTaken.append([player, team, penalty])
             exclude[team-1].append(player)
@@ -193,5 +258,8 @@ class Match:
             shootPenality(2)
 
         return self.teams[0] if self.penals[0] > self.penals[1] else self.teams[1]
+    def printPenalties(self):
+        for penalty in self.penaltiesTaken:
+            print(f"{Player.get(penalty[0]).getName()} ({Team.get(penalty[1]).name}): {penalty[2]}")
         
         

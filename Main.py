@@ -76,7 +76,7 @@ def loadTeamsFormation(path:str) -> csv.DictReader:
         for row in database:
             form = Team.get(row["team"]).setFormation(row["formation"])
             for i in range(1,12):
-                form.changePlayer(i, row["pos"+str(i)])
+                form.changePlayer(i, row["pos"+str(i)], True)
         return database
 
 ########################################################
@@ -94,3 +94,7 @@ loadPlayers("database/persons/Players.csv")
 loadContracts("database/persons/Contracts.csv")
 loadTeamsFormation("database/teams/TeamsFormation.csv")
 ########################################################
+
+
+mtch = Match(1,2,True)
+print(mtch)
