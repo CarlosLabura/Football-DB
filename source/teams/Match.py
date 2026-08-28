@@ -59,7 +59,7 @@ class Match:
                 if event["type"]  == Event.Goal:
                     events = events + f" - GOAL: {Player.get(event["player"]).getName()} ({self.teams[event["team"]].name}) {event["time"]}'\n"
                 elif event["type"] == Event.Sub:
-                    events = events + f" - SUB: <- {Player.get(event["info"]).getName()} | -> {Player.get(event["player"]).getName()} {event["time"]}' ({event["player"]}, {event["info"]})\n"
+                    events = events + f" - SUB: <- {Player.get(event["info"]).getName()} | -> {Player.get(event["player"]).getName()} {event["time"]}'\n"
                 
         if self.penalties and self.score[0] == self.score[1]:
                 return f"{self.teams[0].name} {self.score[0]} ({self.penals[0]}) - ({self.penals[1]}) {self.score[1]} {self.teams[1].name} \n{events}"
@@ -174,12 +174,10 @@ class Match:
                     ]
                     if not availablePositions:
                         break
-
-                    if random.randint(1, 150) == 1:
+                    if random.randint(1, 200) == 1:
                         position = 1
                     else:
                         position = random.choice(availablePositions)
-
                     if position in usedPositions:
                         break
 

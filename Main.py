@@ -95,6 +95,3 @@ loadPlayers("database/persons/Players.csv")
 loadContracts("database/persons/Contracts.csv")
 loadTeamsFormation("database/teams/TeamsFormation.csv")
 ########################################################
-
-mtch = Match(1,2,True)
-print(mtch)
