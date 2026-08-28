@@ -14,9 +14,15 @@ class Match:
     def __init__(self, team1:int=1, team2:int=1, simulate:bool=False) -> Match:
         """ Starts a Match object | Returns: self """
         self.teams = [Team.get(int(team1)), Team.get(int(team2))]
+        """ [0]: Local team - [1]: Away team """ 
         self.teams[0].formation.reset()
         self.teams[1].formation.reset()
-        """ [0]: Local team - [1]: Away team """ 
+        self.activePlayers = [
+            self.teams[0].formation.players.copy(),
+            self.teams[1].formation.players.copy(),
+        ]
+        self.substitutionPositions = [{}, {}]
+        """ Positions already substituted by team and minute """
         self.score = [0,0]
         self.forcedScore = None
         """ Forced score, goals will automatically simulate from this result"""
@@ -51,10 +57,9 @@ class Match:
         if self.showEvents:
             for event in self.events:
                 if event["type"]  == Event.Goal:
-                    print(event["team"])
                     events = events + f" - GOAL: {Player.get(event["player"]).getName()} ({self.teams[event["team"]].name}) {event["time"]}'\n"
                 elif event["type"] == Event.Sub:
-                    events = events + f" - SUB: <- {Player.get(event["info"]).getName()} | -> {Player.get(event["player"]).getName()} {event["time"]}'\n"
+                    events = events + f" - SUB: <- {Player.get(event["info"]).getName()} | -> {Player.get(event["player"]).getName()} {event["time"]}' ({event["player"]}, {event["info"]})\n"
                 
         if self.penalties and self.score[0] == self.score[1]:
                 return f"{self.teams[0].name} {self.score[0]} ({self.penals[0]}) - ({self.penals[1]}) {self.score[1]} {self.teams[1].name} \n{events}"
@@ -128,16 +133,12 @@ class Match:
         team = max(0, min(1, int(team)))
         bestPlayer:Player
         first = True
-
-        outlist = []
-        for out in self.teams[team].formation.changed:
-            outlist.append(out[1])
             
         for player in self.teams[team].formation.available:
             if first:
                 bestPlayer = Player.get(player)
                 first = False
-            if Player.get(player).getPositionOverall(self.teams[team].formation.getPosition(position)["name"]) > bestPlayer.getPositionOverall(self.teams[team].formation.getPosition(position)["name"]) and player not in outlist:
+            if Player.get(player).getPositionOverall(self.teams[team].formation.getPosition(position)["name"]) > bestPlayer.getPositionOverall(self.teams[team].formation.getPosition(position)["name"]):
                 bestPlayer = Player.get(player)
 
         return bestPlayer.id
@@ -163,14 +164,27 @@ class Match:
             # SUBS
             windows = random.randint(0, self.windows[team])
             self.windows[team] -= windows
-            for _ in range(self.windows[team]):
+            for _ in range(windows):
                 minute = random.randint(int(end/2), end)
+                usedPositions = self.substitutionPositions[team].setdefault(minute, set())
                 for i in range(random.randint(0, self.subs[team])):
+                    availablePositions = [
+                        position for position in range(2, 12)
+                        if position not in usedPositions
+                    ]
+                    if not availablePositions:
+                        break
+
                     if random.randint(1, 150) == 1:
-                        self.sub(team, 1, self.getBestPlayer(team, 1), minute)
+                        position = 1
                     else:
-                        position = random.randint(2, 11)
-                        self.sub(team, position, self.getBestPlayer(team, position), minute)
+                        position = random.choice(availablePositions)
+
+                    if position in usedPositions:
+                        break
+
+                    self.sub(team, position, self.getBestPlayer(team, position), minute)
+                    usedPositions.add(position)
     def simulate(self) -> Team:
         """ Simluates events in a match | Returns: Winner Team object or None if they tie """
         self.simulateEvents(1, self.minutes)
@@ -220,11 +234,13 @@ class Match:
     def sub(self, team:int, position:int, player:int, time:int) -> Player:
         """ Sub a player into the formation of a team | Returns: Subbed out Player object """
         team = max(0, min(1, int(team)))
-        sub = self.teams[team].formation.changePlayer(position, player)
+        outgoing = self.activePlayers[team][position]
+        self.teams[team].formation.changePlayer(position, player)
+        self.activePlayers[team][position] = int(player)
         self.subs[team] -= 1
-        self.event(Event.Sub, player, team, time, sub.id)
+        self.event(Event.Sub, player, team, time, outgoing)
         self.fixEvents(time)
-        return sub
+        return Player.get(outgoing)
     def penaltyShootout(self) -> Team:
         """ In case of tie, untie with a penalty shootout | Return: Winning Team object"""
         exclude = [[], []]

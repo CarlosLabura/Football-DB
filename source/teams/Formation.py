@@ -63,9 +63,8 @@ class Formation:
     def reset(self):
         """ Reset formation """
         self.changed = []
-        self.available = self.team
-        for i in range(1,12):
-            self.changePlayer(i, self.starter[i], True)
+        self.players = self.starter.copy()
+        self.available = self.team - set(self.starter.values())
     def changePlayer(self, position:int, player:int, starter:bool = False):
         """ Change player (id) selected for the position IN FORMATION (1-11) selected | Returns: Player object changed or None """
         position = max(1, min(11, int(position)))
@@ -86,7 +85,8 @@ class Formation:
         playerList = []
 
         for player in self.players:
-            playerList.append(player+1)
+            if self.players[player] is not None:
+                playerList.append(self.players[player])
 
         return playerList
     def getPosition(self, id:int) -> dict:
